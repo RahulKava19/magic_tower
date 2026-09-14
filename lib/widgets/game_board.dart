@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+//Displays the map
 
+import 'package:flutter/material.dart';
+import '../game/game_map.dart';
 import '../models/player.dart';
 
 class GameBoard extends StatelessWidget {
@@ -17,19 +19,23 @@ class GameBoard extends StatelessWidget {
       child: GridView.builder(
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 10,
+          crossAxisCount: GameMap.columns,
         ),
-        itemCount: 100,
+        itemCount: GameMap.rows * GameMap.columns,
         itemBuilder: (context, index) {
-          final int row = index ~/ 10;
-          final int column = index % 10;
+          final int row = index ~/ GameMap.columns;
+          final int column = index % GameMap.columns;
 
           final bool isPlayer =
               row == player.row && column == player.column;
 
+          final bool isWall = GameMap.isWall(row, column);
+
           return Container(
             decoration: BoxDecoration(
-              color: Colors.grey.shade800,
+              color: isWall
+                  ? Colors.brown.shade700
+                  : Colors.grey.shade800,
               border: Border.all(
                 color: Colors.black,
                 width: 1,
@@ -40,6 +46,11 @@ class GameBoard extends StatelessWidget {
                 ? const Text(
               '🧙',
               style: TextStyle(fontSize: 28),
+            )
+                : isWall
+                ? const Text(
+              '🧱',
+              style: TextStyle(fontSize: 20),
             )
                 : null,
           );

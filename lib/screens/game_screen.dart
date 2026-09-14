@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+//To control the game
 
+import 'package:flutter/material.dart';
+import '../game/game_map.dart';
 import '../models/player.dart';
 import '../widgets/game_board.dart';
 
@@ -14,9 +16,25 @@ class _GameScreenState extends State<GameScreen> {
   final Player player = Player();
 
   void movePlayer(int rowChange, int columnChange) {
+    final int newRow = player.row + rowChange;
+    final int newColumn = player.column + columnChange;
+
+    // Check board boundaries
+    if (newRow < 0 ||
+        newRow >= GameMap.rows ||
+        newColumn < 0 ||
+        newColumn >= GameMap.columns) {
+      return;
+    }
+
+    // Check wall collision
+    if (GameMap.isWall(newRow, newColumn)) {
+      return;
+    }
+
     setState(() {
-      player.row += rowChange;
-      player.column += columnChange;
+      player.row = newRow;
+      player.column = newColumn;
     });
   }
 
@@ -38,9 +56,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
           ),
-
           _buildMovementControls(),
-
           const SizedBox(height: 20),
         ],
       ),
@@ -54,9 +70,7 @@ class _GameScreenState extends State<GameScreen> {
           Icons.keyboard_arrow_up,
               () => movePlayer(-1, 0),
         ),
-
         const SizedBox(height: 8),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -64,16 +78,12 @@ class _GameScreenState extends State<GameScreen> {
               Icons.keyboard_arrow_left,
                   () => movePlayer(0, -1),
             ),
-
             const SizedBox(width: 8),
-
             _movementButton(
               Icons.keyboard_arrow_down,
                   () => movePlayer(1, 0),
             ),
-
             const SizedBox(width: 8),
-
             _movementButton(
               Icons.keyboard_arrow_right,
                   () => movePlayer(0, 1),
