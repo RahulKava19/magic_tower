@@ -1,0 +1,138 @@
+//To store the structure of the map
+
+enum TileType {
+  floor,
+  wall,
+}
+
+class GameMap {
+  static const int rows = 10;
+  static const int columns = 10;
+
+  static const List<List<TileType>> floor1 = [
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.wall,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.wall,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.floor,
+      TileType.wall,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.wall,
+      TileType.wall,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+    ],
+    [
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+      TileType.floor,
+    ],
+  ];
+
+  static bool isWall(int row, int column) {
+    return floor1[row][column] == TileType.wall;
+  }
+}
