@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import '../game/game_map.dart';
 import '../models/player.dart';
+import '../models/door.dart';
+import '../models/key.dart';
 import '../widgets/game_board.dart';
 
 class GameScreen extends StatefulWidget {
@@ -15,6 +17,8 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   final Player player = Player();
 
+
+  //This will be called from the _movementButton
   void movePlayer(int rowChange, int columnChange) {
     final int newRow = player.row + rowChange;
     final int newColumn = player.column + columnChange;
@@ -32,10 +36,84 @@ class _GameScreenState extends State<GameScreen> {
       return;
     }
 
+    // Check if destination contains a door
+    final door = GameMap.getDoorAt(newRow, newColumn);
+    if (door != null && !door.isOpen) {
+      if (!_unlockDoor(door)) {
+        return;
+      }
+    }
+
     setState(() {
       player.row = newRow;
       player.column = newColumn;
     });
+
+    collectKey();
+  }
+
+  //If the current box is having the key then
+  // Increase the count of that color key and change the state of key.
+  void collectKey() {
+    for (final key in GameMap.floor1Keys) {
+      if (key.row == player.row &&
+          key.column == player.column &&
+          !key.isCollected) {
+        setState(() {
+          key.isCollected = true;
+
+          switch (key.color) {
+            case KeyColor.red:
+              player.redKeys++;
+              break;
+
+            case KeyColor.blue:
+              player.blueKeys++;
+              break;
+
+            case KeyColor.yellow:
+              player.yellowKeys++;
+              break;
+          }
+        });
+
+        return;
+      }
+    }
+  }
+
+  // CHeck that same color key is available or not.
+  // If key is available then decrease it and remove the door.
+  bool _unlockDoor(Door door) {
+    switch (door.color) {
+      case KeyColor.red:
+        if (player.redKeys <= 0) {
+          return false;
+        }
+
+        player.redKeys--;
+        break;
+
+      case KeyColor.blue:
+        if (player.blueKeys <= 0) {
+          return false;
+        }
+
+        player.blueKeys--;
+        break;
+
+      case KeyColor.yellow:
+        if (player.yellowKeys <= 0) {
+          return false;
+        }
+
+        player.yellowKeys--;
+        break;
+    }
+
+    door.isOpen = true;
+
+    return true;
   }
 
   @override

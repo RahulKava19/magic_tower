@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../game/game_map.dart';
+import '../models/door.dart';
+import '../models/key.dart';
 import '../models/player.dart';
 
 class GameBoard extends StatelessWidget {
@@ -31,6 +33,10 @@ class GameBoard extends StatelessWidget {
 
           final bool isWall = GameMap.isWall(row, column);
 
+          final KeyItem? keyItem = GameMap.getKeyAt(row, column);
+
+          final Door? door = GameMap.getDoorAt(row, column);
+
           return Container(
             decoration: BoxDecoration(
               color: isWall
@@ -42,20 +48,83 @@ class GameBoard extends StatelessWidget {
               ),
             ),
             alignment: Alignment.center,
-            child: isPlayer
-                ? const Text(
-              '🧙',
-              style: TextStyle(fontSize: 28),
-            )
-                : isWall
-                ? const Text(
-              '🧱',
-              style: TextStyle(fontSize: 20),
-            )
-                : null,
+            child: _buildCellContent(
+              isPlayer: isPlayer,
+              isWall: isWall,
+              keyItem: keyItem,
+              door: door,
+            ),
           );
         },
       ),
     );
+  }
+
+  Widget? _buildCellContent({
+    required bool isPlayer,
+    required bool isWall,
+    required KeyItem? keyItem,
+    required Door? door,
+  }) {
+
+    // Player has highest priority.
+    if (isPlayer) {
+      return const Text(
+        '🧙',
+        style: TextStyle(fontSize: 28),
+      );
+    }
+
+    // Wall
+    if (isWall) {
+      return const Text(
+        '🧱',
+        style: TextStyle(fontSize: 20),
+      );
+    }
+
+    // Door
+    if (door != null && !door.isOpen) {
+      return Text(
+        _getDoorEmoji(door.color),
+        style: const TextStyle(fontSize: 22),
+      );
+    }
+
+    // Key
+    if (keyItem != null) {
+      return Text(
+        _getKeyEmoji(keyItem.color),
+        style: const TextStyle(fontSize: 22),
+      );
+    }
+
+    return null;
+  }
+
+  String _getKeyEmoji(KeyColor color) {
+    switch (color) {
+      case KeyColor.red:
+        return '🔴';
+
+      case KeyColor.blue:
+        return '🔵';
+
+      case KeyColor.yellow:
+        return '🟡';
+    }
+  }
+
+  String _getDoorEmoji(KeyColor color) {
+    switch (color) {
+      case KeyColor.red:
+        return '🟥';
+
+      case KeyColor.blue:
+        return '🚪';
+
+      case KeyColor.yellow:
+        return '🟨';
+    }
   }
 }
