@@ -6,6 +6,7 @@ import '../models/player.dart';
 import '../models/door.dart';
 import '../models/key.dart';
 import '../widgets/game_board.dart';
+import '../widgets/player_status.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -16,6 +17,8 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final Player player = Player();
+
+  int currentFloor = 1;
 
 
   //This will be called from the _movementButton
@@ -124,16 +127,37 @@ class _GameScreenState extends State<GameScreen> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Center(
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 600, //To make the UI attractive in big screens
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: GameBoard(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                child: PlayerStatus(
                   player: player,
+                  currentFloor: currentFloor,
                 ),
               ),
             ),
           ),
+
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 600,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: GameBoard(
+                    player: player,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
           _buildMovementControls(),
           const SizedBox(height: 20),
         ],
