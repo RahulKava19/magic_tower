@@ -5,6 +5,7 @@ import '../game/game_map.dart';
 import '../models/player.dart';
 import '../models/door.dart';
 import '../models/key.dart';
+import '../models/monster.dart';
 import '../widgets/game_board.dart';
 import '../widgets/player_status.dart';
 
@@ -45,6 +46,21 @@ class _GameScreenState extends State<GameScreen> {
       if (!_unlockDoor(door)) {
         return;
       }
+    }
+
+    final Monster? monster = GameMap.getMonsterAt(
+      newRow,
+      newColumn,
+    );
+
+    if (monster != null) {
+      _showMonsterEncounter(
+        monster,
+        newRow,
+        newColumn,
+      );
+
+      return;
     }
 
     setState(() {
@@ -117,6 +133,126 @@ class _GameScreenState extends State<GameScreen> {
     door.isOpen = true;
 
     return true;
+  }
+
+  //To show a card to confirm the fight with the monster
+  //Here AlertDialog is used so that the pop will be in small part of the screen and not block whole page
+  void _showMonsterEncounter(
+      Monster monster,
+      int newRow,
+      int newColumn,
+      ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              const Text(
+                '👾',
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  monster.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '❤️ Health: ${monster.health}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                '⭐ XP Reward: ${monster.experienceReward}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                '🪙 Coin Reward: ${monster.coinReward}',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Cancel',
+              ),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                _fightMonster(
+                  monster,
+                  newRow,
+                  newColumn,
+                );
+              },
+              child: const Text(
+                'Fight',
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //This will be called by the _showMonsterEncounter when we tap on fight button
+  void _fightMonster(
+      Monster monster,
+      int newRow,
+      int newColumn,
+      ) {
+    player.health -= monster.health;
+
+    if (player.health <= 0) {
+      player.health = 0;
+
+      // Player dies.
+      return;
+    }
+
+    // Player survives, so monster is defeated.
+    player.experience += monster.experienceReward;
+    player.coins += monster.coinReward;
+
+    monster.isDefeated = true;
+
+    setState(() {
+      player.row = newRow;
+      player.column = newColumn;
+    });
   }
 
   @override

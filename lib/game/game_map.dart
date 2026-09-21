@@ -2,6 +2,7 @@
 
 import '../models/door.dart';
 import '../models/key.dart';
+import '../models/monster.dart';
 
 enum TileType {
   floor,
@@ -45,6 +46,33 @@ class GameMap {
       row: 8,
       column: 5,
       color: KeyColor.yellow,
+    ),
+  ];
+
+  static final List<Monster> floor1Monsters = [
+    Monster(
+      row: 0,
+      column: 7,
+      name: 'Green Slim',
+      health: 500,
+      experienceReward: 100,
+      coinReward: 20,
+    ),
+    Monster(
+      row: 0,
+      column: 6,
+      name: 'red Slim',
+      health: 500,
+      experienceReward: 100,
+      coinReward: 20,
+    ),
+    Monster(
+      row: 0,
+      column: 5,
+      name: 'Green Slim',
+      health: 500,
+      experienceReward: 100,
+      coinReward: 20,
     ),
   ];
   static const List<List<TileType>> floor1 = [
@@ -190,6 +218,19 @@ class GameMap {
     for (final door in floor1Doors) {
       if (door.row == row && door.column == column) {
         return door;
+      }
+    }
+
+    return null;
+  }
+
+
+  static Monster? getMonsterAt(int row, int column) {
+    for (final monster in floor1Monsters) {
+      if (monster.row == row &&
+          monster.column == column &&
+          !monster.isDefeated) {
+        return monster;
       }
     }
 

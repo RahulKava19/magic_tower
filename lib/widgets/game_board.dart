@@ -5,6 +5,7 @@ import '../game/game_map.dart';
 import '../models/door.dart';
 import '../models/key.dart';
 import '../models/player.dart';
+import '../models/monster.dart';
 
 class GameBoard extends StatelessWidget {
   final Player player;
@@ -37,6 +38,8 @@ class GameBoard extends StatelessWidget {
 
           final Door? door = GameMap.getDoorAt(row, column);
 
+          final Monster? monster = GameMap.getMonsterAt(row, column);
+
           return Container(
             decoration: BoxDecoration(
               color: isWall
@@ -53,6 +56,7 @@ class GameBoard extends StatelessWidget {
               isWall: isWall,
               keyItem: keyItem,
               door: door,
+              monster: monster,
             ),
           );
         },
@@ -65,6 +69,7 @@ class GameBoard extends StatelessWidget {
     required bool isWall,
     required KeyItem? keyItem,
     required Door? door,
+    required Monster? monster,
   }) {
 
     // Player has highest priority.
@@ -99,6 +104,12 @@ class GameBoard extends StatelessWidget {
       );
     }
 
+    if (monster != null) {
+      return const Text(
+        '👾',
+        style: TextStyle(fontSize: 24),
+      );
+    }
     return null;
   }
 
