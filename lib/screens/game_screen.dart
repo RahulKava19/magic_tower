@@ -136,7 +136,7 @@ class _GameScreenState extends State<GameScreen> {
     )
         : null;
 
-    if (monster != null) {
+    if (monster != null && !monster.isDefeated) {
       _showMonsterDialog(
         monster,
         newRow,
@@ -157,7 +157,7 @@ class _GameScreenState extends State<GameScreen> {
     )
         : null;
 
-    if (key != null) {
+    if (key != null && !key.isCollected) {
       _collectKey(
         key,
         newRow,
@@ -501,16 +501,6 @@ class _GameScreenState extends State<GameScreen> {
 
   // ============================================================
   // MONSTER DIALOG
-  //
-  // SHOW:
-  // - Monster Health
-  // - Monster Attack
-  // - Monster Defence
-  // - XP Reward
-  // - Coin Reward
-  //
-  // DO NOT SHOW PLAYER ATTACK/DEFENCE HERE.
-  // They are already visible in PlayerStatus.
   // ============================================================
 
   void _showMonsterDialog(
@@ -524,238 +514,243 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (
-              context,
-              dialogSetState,
-              ) {
-            return AlertDialog(
-              title: Row(
-                children: [
-                  Text(
-                    monster.name.toLowerCase().contains(
-                      'skeleton',
-                    )
-                        ? '💀'
-                        : '👾',
-                    style: const TextStyle(
-                      fontSize: 28,
-                    ),
-                  ),
-
-                  const SizedBox(
-                    width: 10,
-                  ),
-
-                  Expanded(
-                    child: Text(
-                      monster.name,
-                    ),
-                  ),
-                ],
+        return AlertDialog(
+          title: Row(
+            children: [
+              Text(
+                monster.name.toLowerCase().contains(
+                  'skeleton',
+                )
+                    ? '💀'
+                    : '👾',
+                style: const TextStyle(
+                  fontSize: 28,
+                ),
               ),
 
-              // ==================================================
-              // MONSTER INFORMATION
-              // ==================================================
-
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ------------------------------------------------
-                  // MONSTER ICON
-                  // ------------------------------------------------
-
-                  Center(
-                    child: Text(
-                      monster.name.toLowerCase().contains(
-                        'skeleton',
-                      )
-                          ? '💀'
-                          : '👾',
-                      style: const TextStyle(
-                        fontSize: 55,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(
-                    height: 12,
-                  ),
-
-                  // ------------------------------------------------
-                  // MONSTER HEALTH
-                  // ------------------------------------------------
-
-                  Text(
-                    '❤️ Health: ${monster.health}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(
-                    height: 6,
-                  ),
-
-                  // ------------------------------------------------
-                  // MONSTER ATTACK
-                  // ------------------------------------------------
-
-                  Text(
-                    '⚔️ Attack: ${monster.attack}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(
-                    height: 6,
-                  ),
-
-                  // ------------------------------------------------
-                  // MONSTER DEFENCE
-                  // ------------------------------------------------
-
-                  Text(
-                    '🛡️ Defence: ${monster.defence}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(
-                    height: 6,
-                  ),
-
-                  // ------------------------------------------------
-                  // XP REWARD
-                  // ------------------------------------------------
-
-                  Text(
-                    '⭐ XP Reward: ${monster.experienceReward}',
-                  ),
-
-                  const SizedBox(
-                    height: 6,
-                  ),
-
-                  // ------------------------------------------------
-                  // COIN REWARD
-                  // ------------------------------------------------
-
-                  Text(
-                    '🪙 Coin Reward: ${monster.coinReward}',
-                  ),
-
-                  const SizedBox(
-                    height: 15,
-                  ),
-
-                  const Text(
-                    'Attack the monster. '
-                        'If it survives, it will attack you.',
-                    style: TextStyle(
-                      color: Colors.black54,
-                    ),
-                  ),
-                ],
+              const SizedBox(
+                width: 10,
               ),
 
-              // ==================================================
-              // BUTTONS
-              // ==================================================
+              Expanded(
+                child: Text(
+                  monster.name,
+                ),
+              ),
+            ],
+          ),
 
-              actions: [
-                // ------------------------------------------------
-                // RUN
-                // ------------------------------------------------
+          // ========================================================
+          // MONSTER INFORMATION
+          // ========================================================
 
-                TextButton(
-                  onPressed: () {
-                    currentMonster = null;
-
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'Run',
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  monster.name.toLowerCase().contains(
+                    'skeleton',
+                  )
+                      ? '💀'
+                      : '👾',
+                  style: const TextStyle(
+                    fontSize: 55,
                   ),
                 ),
+              ),
 
-                // ------------------------------------------------
-                // ATTACK
-                // ------------------------------------------------
+              const SizedBox(
+                height: 12,
+              ),
 
-                ElevatedButton.icon(
-                  onPressed: () {
-                    final bool defeated =
-                    _performAttack(
-                      monster,
-                    );
+              // MONSTER HEALTH
 
-                    if (!mounted) {
-                      return;
-                    }
-
-                    if (defeated ||
-                        player.health <= 0) {
-                      Navigator.of(context).pop();
-                    } else {
-                      dialogSetState(() {});
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.flash_on,
-                  ),
-                  label: const Text(
-                    'Attack',
-                  ),
+              Text(
+                '❤️ Health: ${monster.health}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            );
-          },
+              ),
+
+              const SizedBox(
+                height: 6,
+              ),
+
+              // MONSTER ATTACK
+
+              Text(
+                '⚔️ Attack: ${monster.attack}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 6,
+              ),
+
+              // MONSTER DEFENCE
+
+              Text(
+                '🛡️ Defence: ${monster.defence}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 6,
+              ),
+
+              // XP REWARD
+
+              Text(
+                '⭐ XP Reward: ${monster.experienceReward}',
+              ),
+
+              const SizedBox(
+                height: 6,
+              ),
+
+              // COIN REWARD
+
+              Text(
+                '🪙 Coin Reward: ${monster.coinReward}',
+              ),
+
+              const SizedBox(
+                height: 15,
+              ),
+            ],
+          ),
+
+          // ========================================================
+          // BUTTONS
+          // ========================================================
+
+          actions: [
+            // RUN
+
+            TextButton(
+              onPressed: () {
+                currentMonster = null;
+
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Run',
+              ),
+            ),
+
+            // ATTACK
+
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                _performCompleteCombat(
+                  monster,
+                );
+              },
+              icon: const Icon(
+                Icons.flash_on,
+              ),
+              label: const Text(
+                'Attack',
+              ),
+            ),
+          ],
         );
       },
     );
   }
 
   // ============================================================
-  // PERFORM ONE ATTACK ROUND
+  // COMPLETE COMBAT
   //
-  // PLAYER DAMAGE:
+  // ONE ATTACK BUTTON = COMPLETE FIGHT
   //
-  // Player Attack - Monster Defence
+  // The fight continues automatically until:
   //
-  // MONSTER DAMAGE:
+  // 1. Monster health reaches 0
   //
-  // Monster Attack - Player Defence
+  // OR
   //
-  // Minimum damage = 0
+  // 2. Player health reaches 0
   // ============================================================
 
-  bool _performAttack(
+  void _performCompleteCombat(
       Monster monster,
       ) {
-    // ==========================================================
-    // PLAYER ATTACK
-    // ==========================================================
+    int totalPlayerDamage = 0;
+    int totalMonsterDamage = 0;
 
-    int playerDamage =
-        player.attack - monster.defence;
-
-    if (playerDamage < 0) {
-      playerDamage = 0;
-    }
+    int rounds = 0;
 
     // ==========================================================
-    // REDUCE MONSTER HEALTH
+    // FIGHT UNTIL SOMEONE DIES
     // ==========================================================
 
-    monster.health -= playerDamage;
+    while (
+    monster.health > 0 &&
+        player.health > 0) {
+      rounds++;
 
-    if (monster.health < 0) {
-      monster.health = 0;
+      // ========================================================
+      // PLAYER ATTACK
+      //
+      // Player Attack - Monster Defence
+      // ========================================================
+
+      int playerDamage =
+          player.attack -
+              monster.defence;
+
+      if (playerDamage < 0) {
+        playerDamage = 0;
+      }
+
+      monster.health -= playerDamage;
+
+      if (monster.health < 0) {
+        monster.health = 0;
+      }
+
+      totalPlayerDamage +=
+          playerDamage;
+
+      // ========================================================
+      // CHECK MONSTER DEATH
+      // ========================================================
+
+      if (monster.health <= 0) {
+        break;
+      }
+
+      // ========================================================
+      // MONSTER ATTACK
+      //
+      // Monster Attack - Player Defence
+      // ========================================================
+
+      int monsterDamage =
+          monster.attack -
+              player.defence;
+
+      if (monsterDamage < 0) {
+        monsterDamage = 0;
+      }
+
+      player.health -= monsterDamage;
+
+      if (player.health < 0) {
+        player.health = 0;
+      }
+
+      totalMonsterDamage +=
+          monsterDamage;
     }
 
     // ==========================================================
@@ -763,6 +758,8 @@ class _GameScreenState extends State<GameScreen> {
     // ==========================================================
 
     if (monster.health <= 0) {
+      monster.health = 0;
+
       monster.isDefeated = true;
 
       player.experience +=
@@ -774,12 +771,16 @@ class _GameScreenState extends State<GameScreen> {
       player.row = monster.row;
       player.column = monster.column;
 
+      currentMonster = null;
+
       setState(() {});
 
       _showObjectInfo(
         'Monster Defeated',
-        '${monster.name} defeated!\n'
-            '⚔️ Damage dealt: $playerDamage\n'
+        '${monster.name} defeated!\n\n'
+            '⚔️ Total damage dealt: $totalPlayerDamage\n'
+            '🛡️ Damage received: $totalMonsterDamage\n'
+            '🔄 Combat rounds: $rounds\n\n'
             '+${monster.experienceReward} XP\n'
             '+${monster.coinReward} coins.',
         '🏆',
@@ -798,57 +799,22 @@ class _GameScreenState extends State<GameScreen> {
         ),
       );
 
-      currentMonster = null;
-
-      return true;
+      return;
     }
-
-    // ==========================================================
-    // MONSTER COUNTERATTACK
-    // ==========================================================
-
-    int monsterDamage =
-        monster.attack - player.defence;
-
-    if (monsterDamage < 0) {
-      monsterDamage = 0;
-    }
-
-    // ==========================================================
-    // REDUCE PLAYER HEALTH
-    // ==========================================================
-
-    player.health -= monsterDamage;
-
-    if (player.health < 0) {
-      player.health = 0;
-    }
-
-    setState(() {});
 
     // ==========================================================
     // PLAYER DEFEATED
     // ==========================================================
 
     if (player.health <= 0) {
+      player.health = 0;
+
       currentMonster = null;
 
-      return false;
+      setState(() {});
+
+      _showGameOver();
     }
-
-    // ==========================================================
-    // COMBAT INFORMATION
-    // ==========================================================
-
-    _showObjectInfo(
-      'Combat',
-      '${monster.name}\n'
-          '⚔️ You dealt $playerDamage damage.\n'
-          '⚔️ Monster dealt $monsterDamage damage.',
-      '⚔️',
-    );
-
-    return false;
   }
 
   // ============================================================
@@ -864,9 +830,11 @@ class _GameScreenState extends State<GameScreen> {
           title: const Text(
             '💀 Game Over',
           ),
+
           content: const Text(
             'Your health reached zero.',
           ),
+
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -906,25 +874,19 @@ class _GameScreenState extends State<GameScreen> {
       player.blueKeys = 0;
       player.yellowKeys = 0;
 
-      // --------------------------------------------------------
       // RESET KEYS
-      // --------------------------------------------------------
 
       for (final key in GameMap.floor1Keys) {
         key.isCollected = false;
       }
 
-      // --------------------------------------------------------
       // RESET DOORS
-      // --------------------------------------------------------
 
       for (final door in GameMap.floor1Doors) {
         door.isOpen = false;
       }
 
-      // --------------------------------------------------------
       // RESET MONSTERS
-      // --------------------------------------------------------
 
       for (final monster in GameMap.floor1Monsters) {
         monster.isDefeated = false;
@@ -993,9 +955,7 @@ class _GameScreenState extends State<GameScreen> {
 
                   child: Column(
                     children: [
-                      // ==================================================
                       // PLAYER STATUS
-                      // ==================================================
 
                       PlayerStatus(
                         player: player,
@@ -1006,9 +966,7 @@ class _GameScreenState extends State<GameScreen> {
                         height: 14,
                       ),
 
-                      // ==================================================
                       // DESKTOP
-                      // ==================================================
 
                       if (desktop)
                         Row(
@@ -1044,9 +1002,7 @@ class _GameScreenState extends State<GameScreen> {
                           ],
                         )
 
-                      // ==================================================
                       // MOBILE
-                      // ==================================================
 
                       else
                         Column(
@@ -1099,7 +1055,8 @@ class _GameScreenState extends State<GameScreen> {
       ),
 
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+        CrossAxisAlignment.start,
 
         children: [
           const Text(
@@ -1124,7 +1081,8 @@ class _GameScreenState extends State<GameScreen> {
 
                 decoration: BoxDecoration(
                   color: const Color(0xFF263746),
-                  borderRadius: BorderRadius.circular(9),
+                  borderRadius:
+                  BorderRadius.circular(9),
                 ),
 
                 child: Text(
@@ -1143,12 +1101,14 @@ class _GameScreenState extends State<GameScreen> {
                 child: Column(
                   crossAxisAlignment:
                   CrossAxisAlignment.start,
+
                   children: [
                     Text(
                       selectedObject,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                        FontWeight.bold,
                       ),
                     ),
 
@@ -1234,7 +1194,8 @@ class _GameScreenState extends State<GameScreen> {
           ),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment:
+            MainAxisAlignment.center,
             children: [
               _movementButton(
                 Icons.keyboard_arrow_left,
@@ -1281,12 +1242,14 @@ class _GameScreenState extends State<GameScreen> {
         onPressed: onPressed,
 
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF172638),
+          backgroundColor:
+          const Color(0xFF172638),
           foregroundColor: Colors.white,
           padding: EdgeInsets.zero,
 
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius:
+            BorderRadius.circular(10),
 
             side: const BorderSide(
               color: Color(0xFF59799D),
