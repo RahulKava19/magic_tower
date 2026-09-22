@@ -1,26 +1,55 @@
 class Monster {
-  final int row;
-  final int column;
+  // ============================================================
+  // POSITION
+  // ============================================================
 
-  final String name;
+  int row;
+
+  int column;
+
+  // ============================================================
+  // BASIC INFORMATION
+  // ============================================================
+
+  String name;
+
+  // ============================================================
+  // COMBAT
+  // ============================================================
 
   int health;
-  final int maxHealth;
 
-  final int attackPower;
-  final int experienceReward;
-  final int coinReward;
+  int attack;
+
+  int defence;
+
+  // ============================================================
+  // REWARDS
+  // ============================================================
+
+  int experienceReward;
+
+  int coinReward;
+
+  // ============================================================
+  // STATUS
+  // ============================================================
 
   bool isDefeated;
+
+  // ============================================================
+  // CONSTRUCTOR
+  // ============================================================
 
   Monster({
     required this.row,
     required this.column,
     required this.name,
     required this.health,
-    required this.attackPower,
+    required this.attack,
+    required this.defence,
     required this.experienceReward,
     required this.coinReward,
     this.isDefeated = false,
-  }) : maxHealth = health;
+  });
 }

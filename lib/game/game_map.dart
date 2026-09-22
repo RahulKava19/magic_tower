@@ -11,30 +11,18 @@ enum TileType {
 
 class GameMap {
   // ============================================================
-  // COMMON SIZE
+  // MAP SIZE
   // ============================================================
 
   static const int rows = 10;
+
   static const int columns = 10;
 
   // ============================================================
-  // STARTING FLOOR
-  //
-  // 10 x 10 grid
-  //
-  // CENTRAL VERTICAL 2 x 10 PATH
-  //
-  // Columns 4 and 5 are the entrance path.
-  //
-  // Player starts at row 9, column 4.
-  //
-  // Gate is at row 0, column 4.
+  // ENTRANCE MAP
   // ============================================================
 
   static const List<List<TileType>> entranceMap = [
-    // ==========================================================
-    // ROW 0
-    // ==========================================================
     [
       TileType.wall,
       TileType.wall,
@@ -47,10 +35,6 @@ class GameMap {
       TileType.wall,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 1
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -63,10 +47,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 2
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -79,10 +59,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 3
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -95,10 +71,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 4
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -111,10 +83,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 5
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -127,10 +95,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 6
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -143,10 +107,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 7
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -159,10 +119,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 8
-    // ==========================================================
     [
       TileType.wall,
       TileType.floor,
@@ -175,12 +131,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
-    // ==========================================================
-    // ROW 9
-    //
-    // PLAYER STARTS HERE
-    // ==========================================================
     [
       TileType.wall,
       TileType.wall,
@@ -197,10 +147,6 @@ class GameMap {
 
   // ============================================================
   // FLOOR 1
-  //
-  // 10 x 10 dungeon maze
-  //
-  // NO GREENERY.
   // ============================================================
 
   static const List<List<TileType>> floor1 = [
@@ -216,37 +162,34 @@ class GameMap {
       TileType.wall,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.floor,
       TileType.floor,
-      TileType.floor,
       TileType.wall,
       TileType.floor,
       TileType.floor,
       TileType.floor,
       TileType.floor,
+      TileType.gate,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.floor,
       TileType.wall,
-      TileType.floor,
       TileType.wall,
       TileType.floor,
+      TileType.wall,
       TileType.wall,
       TileType.wall,
       TileType.floor,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.floor,
-      TileType.wall,
+      TileType.floor,
       TileType.floor,
       TileType.floor,
       TileType.floor,
@@ -255,7 +198,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.floor,
@@ -264,11 +206,10 @@ class GameMap {
       TileType.wall,
       TileType.floor,
       TileType.wall,
-      TileType.floor,
+      TileType.wall,
       TileType.floor,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.floor,
@@ -281,20 +222,18 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
     [
-      TileType.wall,
-      TileType.wall,
       TileType.wall,
       TileType.floor,
       TileType.wall,
+      TileType.floor,
+      TileType.floor,
       TileType.floor,
       TileType.floor,
       TileType.floor,
       TileType.wall,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.floor,
@@ -307,11 +246,10 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
     [
       TileType.wall,
+      TileType.gate,
       TileType.floor,
-      TileType.wall,
       TileType.floor,
       TileType.floor,
       TileType.floor,
@@ -320,7 +258,6 @@ class GameMap {
       TileType.floor,
       TileType.wall,
     ],
-
     [
       TileType.wall,
       TileType.wall,
@@ -348,7 +285,7 @@ class GameMap {
 
     KeyItem(
       row: 1,
-      column: 7,
+      column: 5,
       color: KeyColor.blue,
     ),
 
@@ -367,20 +304,18 @@ class GameMap {
 
   // ============================================================
   // DOORS
-  //
-  // Every door has a matching key.
   // ============================================================
 
   static final List<Door> floor1Doors = [
     Door(
-      row: 3,
+      row: 5,
       column: 2,
       color: KeyColor.red,
     ),
 
     Door(
-      row: 3,
-      column: 6,
+      row: 6,
+      column: 7,
       color: KeyColor.blue,
     ),
 
@@ -399,6 +334,14 @@ class GameMap {
 
   // ============================================================
   // MONSTERS
+  //
+  // Each monster now has:
+  //
+  // Health
+  // Attack
+  // Defence
+  // XP
+  // Coins
   // ============================================================
 
   static final List<Monster> floor1Monsters = [
@@ -406,19 +349,31 @@ class GameMap {
       row: 3,
       column: 7,
       name: 'Green Slime',
+
       health: 500,
-      attackPower: 100,
+
+      attack: 100,
+
+      defence: 50,
+
       experienceReward: 100,
+
       coinReward: 20,
     ),
 
     Monster(
       row: 5,
-      column: 7,
+      column: 8,
       name: 'Skeleton',
+
       health: 700,
-      attackPower: 150,
+
+      attack: 150,
+
+      defence: 100,
+
       experienceReward: 150,
+
       coinReward: 30,
     ),
 
@@ -426,9 +381,15 @@ class GameMap {
       row: 7,
       column: 1,
       name: 'Red Slime',
+
       health: 500,
-      attackPower: 120,
+
+      attack: 120,
+
+      defence: 60,
+
       experienceReward: 100,
+
       coinReward: 25,
     ),
 
@@ -436,15 +397,21 @@ class GameMap {
       row: 8,
       column: 5,
       name: 'Skeleton',
+
       health: 700,
-      attackPower: 150,
+
+      attack: 150,
+
+      defence: 100,
+
       experienceReward: 150,
+
       coinReward: 30,
     ),
   ];
 
   // ============================================================
-  // DIMENSIONS
+  // FLOOR SIZE
   // ============================================================
 
   static int rowsForFloor(int floor) {
@@ -506,7 +473,7 @@ class GameMap {
   }
 
   // ============================================================
-  // KEY
+  // GET KEY
   // ============================================================
 
   static KeyItem? getKeyAt(
@@ -525,7 +492,7 @@ class GameMap {
   }
 
   // ============================================================
-  // DOOR
+  // GET DOOR
   // ============================================================
 
   static Door? getDoorAt(
@@ -543,7 +510,7 @@ class GameMap {
   }
 
   // ============================================================
-  // MONSTER
+  // GET MONSTER
   // ============================================================
 
   static Monster? getMonsterAt(
