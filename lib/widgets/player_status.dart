@@ -14,53 +14,21 @@ class PlayerStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const int maxHealth = 2000;
-
-    final double healthProgress =
-    (player.health / maxHealth)
-        .clamp(0.0, 1.0);
-
-    final String floorText =
-    currentFloor == 0
-        ? 'ENTRANCE'
-        : 'FLOOR $currentFloor';
-
     return Container(
-      padding:
-      const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 9,
-      ),
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        gradient:
-        const LinearGradient(
-          colors: [
-            Color(0xFF101C27),
-            Color(0xFF0B151F),
-          ],
-        ),
-        borderRadius:
-        BorderRadius.circular(14),
+        color: const Color(0xFF101C27),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-          const Color(0xFF49657A),
+          color: const Color(0xFF49657A),
         ),
-        boxShadow: [
-          BoxShadow(
-            color:
-            Colors.black.withValues(
-              alpha: 0.3,
-            ),
-            blurRadius: 10,
-            offset:
-            const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ======================================================
-          // HEADER
+          // FLOOR
           // ======================================================
 
           Row(
@@ -68,172 +36,87 @@ class PlayerStatus extends StatelessWidget {
               const Text(
                 '🏰',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 22,
                 ),
               ),
-
-              const SizedBox(
-                width: 7,
-              ),
-
-              const Expanded(
-                child: Text(
-                  'MAGIC TOWER',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight:
-                    FontWeight.w900,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-
-              Container(
-                padding:
-                const EdgeInsets.symmetric(
-                  horizontal: 9,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color:
-                  const Color(0xFF14283D),
-                  borderRadius:
-                  BorderRadius.circular(7),
-                ),
-                child: Text(
-                  floorText,
-                  style: const TextStyle(
-                    color:
-                    Color(0xFFFFD166),
-                    fontSize: 12,
-                    fontWeight:
-                    FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(
-            height: 8,
-          ),
-
-          // ======================================================
-          // HEALTH
-          // ======================================================
-
-          Row(
-            children: [
-              const Text(
-                '❤️',
-                style: TextStyle(
+              const SizedBox(width: 8),
+              Text(
+                _floorName(),
+                style: const TextStyle(
+                  color: Colors.white,
                   fontSize: 18,
-                ),
-              ),
-
-              const SizedBox(
-                width: 6,
-              ),
-
-              Expanded(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment
-                          .spaceBetween,
-                      children: [
-                        const Text(
-                          'HP',
-                          style: TextStyle(
-                            color:
-                            Colors.white70,
-                            fontSize: 10,
-                            fontWeight:
-                            FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '${player.health}/$maxHealth',
-                          style:
-                          const TextStyle(
-                            color:
-                            Colors.white,
-                            fontSize: 10,
-                            fontWeight:
-                            FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(
-                      height: 3,
-                    ),
-
-                    ClipRRect(
-                      borderRadius:
-                      BorderRadius.circular(
-                        5,
-                      ),
-                      child:
-                      LinearProgressIndicator(
-                        value:
-                        healthProgress,
-                        minHeight: 7,
-                        backgroundColor:
-                        const Color(
-                          0xFF17222B,
-                        ),
-                        valueColor:
-                        const AlwaysStoppedAnimation<
-                            Color>(
-                          Color(0xFFE74C3C),
-                        ),
-                      ),
-                    ),
-                  ],
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
 
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 12),
 
           // ======================================================
-          // XP / COINS / KEYS
+          // PLAYER STATS
+          // ======================================================
+
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _statBox(
+                icon: '❤️',
+                title: 'Health',
+                value: '${player.health}',
+              ),
+
+              _statBox(
+                icon: '⚔️',
+                title: 'Attack',
+                value: '${player.attack}',
+              ),
+
+              _statBox(
+                icon: '🛡️',
+                title: 'Defence',
+                value: '${player.defence}',
+              ),
+
+              _statBox(
+                icon: '⭐',
+                title: 'XP',
+                value: '${player.experience}',
+              ),
+
+              _statBox(
+                icon: '🪙',
+                title: 'Coins',
+                value: '${player.coins}',
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          // ======================================================
+          // KEYS
           // ======================================================
 
           Row(
-            mainAxisAlignment:
-            MainAxisAlignment
-                .spaceBetween,
             children: [
-              _stat(
-                '⭐',
-                '${player.experience} XP',
-              ),
-
-              _stat(
-                '🪙',
-                '${player.coins}',
-              ),
-
-              _key(
-                const Color(0xFFFF4D4D),
+              _keyInfo(
+                '🔴',
                 player.redKeys,
               ),
 
-              _key(
-                const Color(0xFF4D9FFF),
+              const SizedBox(width: 12),
+
+              _keyInfo(
+                '🔵',
                 player.blueKeys,
               ),
 
-              _key(
-                const Color(0xFFFFD43B),
+              const SizedBox(width: 12),
+
+              _keyInfo(
+                '🟡',
                 player.yellowKeys,
               ),
             ],
@@ -244,16 +127,69 @@ class PlayerStatus extends StatelessWidget {
   }
 
   // ============================================================
-  // NORMAL STAT
+  // STAT BOX
   // ============================================================
 
-  Widget _stat(
+  Widget _statBox({
+    required String icon,
+    required String title,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 7,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF172638),
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(
+          color: const Color(0xFF30485E),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            icon,
+            style: const TextStyle(
+              fontSize: 17,
+            ),
+          ),
+
+          const SizedBox(width: 5),
+
+          Text(
+            '$title: ',
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+            ),
+          ),
+
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // KEY INFO
+  // ============================================================
+
+  Widget _keyInfo(
       String icon,
-      String text,
+      int count,
       ) {
     return Row(
-      mainAxisSize:
-      MainAxisSize.min,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           icon,
@@ -261,14 +197,14 @@ class PlayerStatus extends StatelessWidget {
             fontSize: 16,
           ),
         ),
+
         const SizedBox(width: 4),
+
         Text(
-          text,
+          '$count',
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 11,
-            fontWeight:
-            FontWeight.bold,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],
@@ -276,38 +212,22 @@ class PlayerStatus extends StatelessWidget {
   }
 
   // ============================================================
-  // KEY
+  // FLOOR NAME
   // ============================================================
 
-  Widget _key(
-      Color color,
-      int count,
-      ) {
-    return Row(
-      mainAxisSize:
-      MainAxisSize.min,
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(
-          width: 3,
-        ),
-        Text(
-          '$count',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 11,
-            fontWeight:
-            FontWeight.bold,
-          ),
-        ),
-      ],
-    );
+  String _floorName() {
+    switch (currentFloor) {
+      case 0:
+        return 'Entrance Floor';
+
+      case 1:
+        return 'Floor 1';
+
+      case 2:
+        return 'Floor 2';
+
+      default:
+        return 'Magic Tower';
+    }
   }
 }
