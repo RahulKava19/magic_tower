@@ -14,12 +14,10 @@ class GameScreen extends StatefulWidget {
   });
 
   @override
-  State<GameScreen> createState() =>
-      _GameScreenState();
+  State<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState
-    extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen> {
   // ============================================================
   // PLAYER
   // ============================================================
@@ -39,13 +37,12 @@ class _GameScreenState
   String selectedObject = 'Entrance';
 
   String selectedDescription =
-      'Follow the central vertical path '
-      'towards the tower gate.';
+      'Follow the central vertical path towards the tower gate.';
 
   String selectedIcon = '🏰';
 
   // ============================================================
-  // CURRENT MONSTER COMBAT
+  // CURRENT MONSTER
   // ============================================================
 
   Monster? currentMonster;
@@ -58,11 +55,8 @@ class _GameScreenState
       int rowChange,
       int columnChange,
       ) {
-    final int newRow =
-        player.row + rowChange;
-
-    final int newColumn =
-        player.column + columnChange;
+    final int newRow = player.row + rowChange;
+    final int newColumn = player.column + columnChange;
 
     // ==========================================================
     // MAP BOUNDARY
@@ -103,8 +97,7 @@ class _GameScreenState
     )) {
       _showObjectInfo(
         'Wall',
-        'This is a solid tower wall. '
-            'You cannot pass through it.',
+        'This is a solid tower wall. You cannot pass through it.',
         '🧱',
       );
 
@@ -115,16 +108,14 @@ class _GameScreenState
     // DOOR
     // ==========================================================
 
-    final Door? door =
-    currentFloor == 1
+    final Door? door = currentFloor == 1
         ? GameMap.getDoorAt(
       newRow,
       newColumn,
     )
         : null;
 
-    if (door != null &&
-        !door.isOpen) {
+    if (door != null && !door.isOpen) {
       _tryOpenDoor(
         door,
         newRow,
@@ -138,8 +129,7 @@ class _GameScreenState
     // MONSTER
     // ==========================================================
 
-    final Monster? monster =
-    currentFloor == 1
+    final Monster? monster = currentFloor == 1
         ? GameMap.getMonsterAt(
       newRow,
       newColumn,
@@ -160,8 +150,7 @@ class _GameScreenState
     // KEY
     // ==========================================================
 
-    final KeyItem? key =
-    currentFloor == 1
+    final KeyItem? key = currentFloor == 1
         ? GameMap.getKeyAt(
       newRow,
       newColumn,
@@ -187,15 +176,10 @@ class _GameScreenState
       player.column = newColumn;
     });
 
-    // ==========================================================
-    // INFORMATION
-    // ==========================================================
-
     if (currentFloor == 0) {
       _showObjectInfo(
         'Entrance Path',
-        'Follow the vertical path '
-            'towards the tower entrance.',
+        'Follow the vertical path towards the tower entrance.',
         '⬆️',
       );
     } else {
@@ -221,14 +205,12 @@ class _GameScreenState
     }
 
     if (currentFloor == 1) {
-      if (row == 8 &&
-          column == 1) {
+      if (row == 8 && column == 1) {
         _goToPreviousFloor();
         return;
       }
 
-      if (row == 1 &&
-          column == 8) {
+      if (row == 1 && column == 8) {
         _goToNextFloor();
         return;
       }
@@ -253,8 +235,7 @@ class _GameScreenState
           ),
           content: const Text(
             'You reached the main entrance.\n\n'
-                'The first dungeon floor begins '
-                'beyond this gate.',
+                'The first dungeon floor begins beyond this gate.',
           ),
           actions: [
             TextButton(
@@ -278,9 +259,7 @@ class _GameScreenState
 
                 _showObjectInfo(
                   'Floor 1',
-                  'Explore the dungeon. '
-                      'Find keys, open doors '
-                      'and defeat monsters.',
+                  'Explore the dungeon. Find keys, open doors and defeat monsters.',
                   '🏰',
                 );
               },
@@ -331,8 +310,7 @@ class _GameScreenState
 
                 _showObjectInfo(
                   'Entrance Floor',
-                  'You returned to the entrance '
-                      'of the tower.',
+                  'You returned to the entrance of the tower.',
                   '⬇️',
                 );
               },
@@ -359,8 +337,7 @@ class _GameScreenState
             '⬆️ Next Floor',
           ),
           content: const Text(
-            'You found the staircase to '
-                'the next floor.\n\n'
+            'You found the staircase to the next floor.\n\n'
                 'Floor 2 will be connected here.',
           ),
           actions: [
@@ -370,8 +347,7 @@ class _GameScreenState
 
                 _showObjectInfo(
                   'Floor 2',
-                  'The second floor is ready '
-                      'to be connected.',
+                  'The second floor is ready to be connected.',
                   '⬆️',
                 );
               },
@@ -415,24 +391,24 @@ class _GameScreenState
       }
     });
 
-    final String color =
-    _keyColorName(key.color);
+    final String color = _keyColorName(
+      key.color,
+    );
 
     _showObjectInfo(
       '$color Key',
-      'You collected the $color key. '
-          'Find the matching $color door.',
+      'You collected the $color key. Find the matching $color door.',
       '🔑',
     );
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           '🔑 $color key collected!',
         ),
-        duration:
-        const Duration(seconds: 1),
+        duration: const Duration(
+          seconds: 1,
+        ),
       ),
     );
   }
@@ -450,23 +426,21 @@ class _GameScreenState
 
     switch (door.color) {
       case KeyColor.red:
-        hasKey =
-            player.redKeys > 0;
+        hasKey = player.redKeys > 0;
         break;
 
       case KeyColor.blue:
-        hasKey =
-            player.blueKeys > 0;
+        hasKey = player.blueKeys > 0;
         break;
 
       case KeyColor.yellow:
-        hasKey =
-            player.yellowKeys > 0;
+        hasKey = player.yellowKeys > 0;
         break;
     }
 
-    final String color =
-    _keyColorName(door.color);
+    final String color = _keyColorName(
+      door.color,
+    );
 
     if (!hasKey) {
       _showObjectInfo(
@@ -475,8 +449,7 @@ class _GameScreenState
         '🚪',
       );
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             '🔒 You need a $color key.',
@@ -514,20 +487,30 @@ class _GameScreenState
       '🔓',
     );
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           '🔓 $color door opened!',
         ),
-        duration:
-        const Duration(seconds: 1),
+        duration: const Duration(
+          seconds: 1,
+        ),
       ),
     );
   }
 
   // ============================================================
   // MONSTER DIALOG
+  //
+  // SHOW:
+  // - Monster Health
+  // - Monster Attack
+  // - Monster Defence
+  // - XP Reward
+  // - Coin Reward
+  //
+  // DO NOT SHOW PLAYER ATTACK/DEFENCE HERE.
+  // They are already visible in PlayerStatus.
   // ============================================================
 
   void _showMonsterDialog(
@@ -550,15 +533,12 @@ class _GameScreenState
               title: Row(
                 children: [
                   Text(
-                    monster.name
-                        .toLowerCase()
-                        .contains(
+                    monster.name.toLowerCase().contains(
                       'skeleton',
                     )
                         ? '💀'
                         : '👾',
-                    style:
-                    const TextStyle(
+                    style: const TextStyle(
                       fontSize: 28,
                     ),
                   ),
@@ -575,89 +555,98 @@ class _GameScreenState
                 ],
               ),
 
-              content: Column(
-                mainAxisSize:
-                MainAxisSize.min,
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-                children: [
-                  // ==================================================
-                  // MONSTER HEALTH
-                  // ==================================================
+              // ==================================================
+              // MONSTER INFORMATION
+              // ==================================================
 
-                  Text(
-                    '❤️ Monster Health: '
-                        '${monster.health}',
-                    style:
-                    const TextStyle(
-                      fontWeight:
-                      FontWeight.bold,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ------------------------------------------------
+                  // MONSTER ICON
+                  // ------------------------------------------------
+
+                  Center(
+                    child: Text(
+                      monster.name.toLowerCase().contains(
+                        'skeleton',
+                      )
+                          ? '💀'
+                          : '👾',
+                      style: const TextStyle(
+                        fontSize: 55,
+                      ),
                     ),
                   ),
 
                   const SizedBox(
-                    height: 8,
+                    height: 12,
                   ),
 
-                  // ==================================================
+                  // ------------------------------------------------
+                  // MONSTER HEALTH
+                  // ------------------------------------------------
+
+                  Text(
+                    '❤️ Health: ${monster.health}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(
+                    height: 6,
+                  ),
+
+                  // ------------------------------------------------
                   // MONSTER ATTACK
-                  // ==================================================
+                  // ------------------------------------------------
 
                   Text(
-                    '⚔️ Monster Attack: '
-                        '${monster.attack}',
+                    '⚔️ Attack: ${monster.attack}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(
-                    height: 5,
+                    height: 6,
                   ),
 
-                  // ==================================================
+                  // ------------------------------------------------
                   // MONSTER DEFENCE
-                  // ==================================================
+                  // ------------------------------------------------
 
                   Text(
-                    '🛡️ Monster Defence: '
-                        '${monster.defence}',
+                    '🛡️ Defence: ${monster.defence}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(
-                    height: 8,
+                    height: 6,
                   ),
 
-                  // ==================================================
-                  // PLAYER HEALTH
-                  // ==================================================
+                  // ------------------------------------------------
+                  // XP REWARD
+                  // ------------------------------------------------
 
                   Text(
-                    '❤️ Your Health: '
-                        '${player.health}',
+                    '⭐ XP Reward: ${monster.experienceReward}',
                   ),
 
                   const SizedBox(
-                    height: 5,
+                    height: 6,
                   ),
 
-                  // ==================================================
-                  // PLAYER ATTACK
-                  // ==================================================
+                  // ------------------------------------------------
+                  // COIN REWARD
+                  // ------------------------------------------------
 
                   Text(
-                    '⚔️ Your Attack: '
-                        '${player.attack}',
-                  ),
-
-                  const SizedBox(
-                    height: 5,
-                  ),
-
-                  // ==================================================
-                  // PLAYER DEFENCE
-                  // ==================================================
-
-                  Text(
-                    '🛡️ Your Defence: '
-                        '${player.defence}',
+                    '🪙 Coin Reward: ${monster.coinReward}',
                   ),
 
                   const SizedBox(
@@ -668,33 +657,35 @@ class _GameScreenState
                     'Attack the monster. '
                         'If it survives, it will attack you.',
                     style: TextStyle(
-                      color:
-                      Colors.black54,
+                      color: Colors.black54,
                     ),
                   ),
                 ],
               ),
 
+              // ==================================================
+              // BUTTONS
+              // ==================================================
+
               actions: [
-                // ==================================================
+                // ------------------------------------------------
                 // RUN
-                // ==================================================
+                // ------------------------------------------------
 
                 TextButton(
                   onPressed: () {
                     currentMonster = null;
 
-                    Navigator.of(context)
-                        .pop();
+                    Navigator.of(context).pop();
                   },
                   child: const Text(
                     'Run',
                   ),
                 ),
 
-                // ==================================================
+                // ------------------------------------------------
                 // ATTACK
-                // ==================================================
+                // ------------------------------------------------
 
                 ElevatedButton.icon(
                   onPressed: () {
@@ -709,8 +700,7 @@ class _GameScreenState
 
                     if (defeated ||
                         player.health <= 0) {
-                      Navigator.of(context)
-                          .pop();
+                      Navigator.of(context).pop();
                     } else {
                       dialogSetState(() {});
                     }
@@ -733,11 +723,11 @@ class _GameScreenState
   // ============================================================
   // PERFORM ONE ATTACK ROUND
   //
-  // PLAYER ATTACK:
+  // PLAYER DAMAGE:
   //
   // Player Attack - Monster Defence
   //
-  // MONSTER ATTACK:
+  // MONSTER DAMAGE:
   //
   // Monster Attack - Player Defence
   //
@@ -748,12 +738,11 @@ class _GameScreenState
       Monster monster,
       ) {
     // ==========================================================
-    // PLAYER DAMAGE
+    // PLAYER ATTACK
     // ==========================================================
 
     int playerDamage =
-        player.attack -
-            monster.defence;
+        player.attack - monster.defence;
 
     if (playerDamage < 0) {
       playerDamage = 0;
@@ -763,8 +752,7 @@ class _GameScreenState
     // REDUCE MONSTER HEALTH
     // ==========================================================
 
-    monster.health -=
-        playerDamage;
+    monster.health -= playerDamage;
 
     if (monster.health < 0) {
       monster.health = 0;
@@ -797,16 +785,16 @@ class _GameScreenState
         '🏆',
       );
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             '🏆 ${monster.name} defeated! '
                 '+${monster.experienceReward} XP '
                 '+${monster.coinReward} coins',
           ),
-          duration:
-          const Duration(seconds: 2),
+          duration: const Duration(
+            seconds: 2,
+          ),
         ),
       );
 
@@ -820,8 +808,7 @@ class _GameScreenState
     // ==========================================================
 
     int monsterDamage =
-        monster.attack -
-            player.defence;
+        monster.attack - player.defence;
 
     if (monsterDamage < 0) {
       monsterDamage = 0;
@@ -831,8 +818,7 @@ class _GameScreenState
     // REDUCE PLAYER HEALTH
     // ==========================================================
 
-    player.health -=
-        monsterDamage;
+    player.health -= monsterDamage;
 
     if (player.health < 0) {
       player.health = 0;
@@ -851,7 +837,7 @@ class _GameScreenState
     }
 
     // ==========================================================
-    // INFORMATION
+    // COMBAT INFORMATION
     // ==========================================================
 
     _showObjectInfo(
@@ -884,8 +870,7 @@ class _GameScreenState
           actions: [
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context)
-                    .pop();
+                Navigator.of(context).pop();
 
                 _resetGame();
               },
@@ -911,27 +896,21 @@ class _GameScreenState
       player.column = 4;
 
       player.health = 2000;
-
       player.attack = 300;
-
       player.defence = 150;
 
       player.experience = 0;
-
       player.coins = 0;
 
       player.redKeys = 0;
-
       player.blueKeys = 0;
-
       player.yellowKeys = 0;
 
       // --------------------------------------------------------
       // RESET KEYS
       // --------------------------------------------------------
 
-      for (final key
-      in GameMap.floor1Keys) {
+      for (final key in GameMap.floor1Keys) {
         key.isCollected = false;
       }
 
@@ -939,8 +918,7 @@ class _GameScreenState
       // RESET DOORS
       // --------------------------------------------------------
 
-      for (final door
-      in GameMap.floor1Doors) {
+      for (final door in GameMap.floor1Doors) {
         door.isOpen = false;
       }
 
@@ -948,8 +926,7 @@ class _GameScreenState
       // RESET MONSTERS
       // --------------------------------------------------------
 
-      for (final monster
-      in GameMap.floor1Monsters) {
+      for (final monster in GameMap.floor1Monsters) {
         monster.isDefeated = false;
 
         if (monster.name
@@ -964,8 +941,7 @@ class _GameScreenState
 
     _showObjectInfo(
       'Entrance',
-      'Follow the central vertical path '
-          'towards the Magic Tower.',
+      'Follow the central vertical path towards the Magic Tower.',
       '🏰',
     );
   }
@@ -981,10 +957,7 @@ class _GameScreenState
       ) {
     setState(() {
       selectedObject = title;
-
-      selectedDescription =
-          description;
-
+      selectedDescription = description;
       selectedIcon = icon;
     });
   }
@@ -998,8 +971,7 @@ class _GameScreenState
       BuildContext context,
       ) {
     return Scaffold(
-      backgroundColor:
-      const Color(0xFF0E0C12),
+      backgroundColor: const Color(0xFF0E0C12),
 
       body: SafeArea(
         child: LayoutBuilder(
@@ -1011,13 +983,11 @@ class _GameScreenState
                 constraints.maxWidth >= 950;
 
             return SingleChildScrollView(
-              padding:
-              const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
 
               child: Center(
                 child: ConstrainedBox(
-                  constraints:
-                  const BoxConstraints(
+                  constraints: const BoxConstraints(
                     maxWidth: 1200,
                   ),
 
@@ -1029,8 +999,7 @@ class _GameScreenState
 
                       PlayerStatus(
                         player: player,
-                        currentFloor:
-                        currentFloor,
+                        currentFloor: currentFloor,
                       ),
 
                       const SizedBox(
@@ -1052,8 +1021,7 @@ class _GameScreenState
                                 children: [
                                   GameBoard(
                                     player: player,
-                                    currentFloor:
-                                    currentFloor,
+                                    currentFloor: currentFloor,
                                   ),
 
                                   const SizedBox(
@@ -1071,8 +1039,7 @@ class _GameScreenState
 
                             Expanded(
                               flex: 3,
-                              child:
-                              _buildInfoPanel(),
+                              child: _buildInfoPanel(),
                             ),
                           ],
                         )
@@ -1086,8 +1053,7 @@ class _GameScreenState
                           children: [
                             GameBoard(
                               player: player,
-                              currentFloor:
-                              currentFloor,
+                              currentFloor: currentFloor,
                             ),
 
                             const SizedBox(
@@ -1122,25 +1088,18 @@ class _GameScreenState
     return Container(
       width: double.infinity,
 
-      padding:
-      const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(14),
 
       decoration: BoxDecoration(
-        color:
-        const Color(0xFF101C27),
-
-        borderRadius:
-        BorderRadius.circular(14),
-
+        color: const Color(0xFF101C27),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-          const Color(0xFF49657A),
+          color: const Color(0xFF49657A),
         ),
       ),
 
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
           const Text(
@@ -1148,8 +1107,7 @@ class _GameScreenState
             style: TextStyle(
               color: Colors.white,
               fontSize: 17,
-              fontWeight:
-              FontWeight.bold,
+              fontWeight: FontWeight.bold,
             ),
           ),
 
@@ -1162,21 +1120,16 @@ class _GameScreenState
               Container(
                 width: 46,
                 height: 46,
-                alignment:
-                Alignment.center,
+                alignment: Alignment.center,
 
-                decoration:
-                BoxDecoration(
-                  color:
-                  const Color(0xFF263746),
-                  borderRadius:
-                  BorderRadius.circular(9),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF263746),
+                  borderRadius: BorderRadius.circular(9),
                 ),
 
                 child: Text(
                   selectedIcon,
-                  style:
-                  const TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                   ),
                 ),
@@ -1193,12 +1146,9 @@ class _GameScreenState
                   children: [
                     Text(
                       selectedObject,
-                      style:
-                      const TextStyle(
-                        color:
-                        Colors.white,
-                        fontWeight:
-                        FontWeight.bold,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
 
@@ -1208,10 +1158,8 @@ class _GameScreenState
 
                     Text(
                       selectedDescription,
-                      style:
-                      const TextStyle(
-                        color:
-                        Colors.white70,
+                      style: const TextStyle(
+                        color: Colors.white70,
                         fontSize: 11,
                       ),
                     ),
@@ -1229,8 +1177,7 @@ class _GameScreenState
             'How to Play',
             style: TextStyle(
               color: Colors.white,
-              fontWeight:
-              FontWeight.bold,
+              fontWeight: FontWeight.bold,
             ),
           ),
 
@@ -1249,8 +1196,7 @@ class _GameScreenState
                 '⬆️ Use the upper gate to continue to the next floor.\n'
                 '🧱 Walls cannot be crossed.',
             style: TextStyle(
-              color:
-              Colors.white70,
+              color: Colors.white70,
               fontSize: 11,
               height: 1.6,
             ),
@@ -1266,19 +1212,13 @@ class _GameScreenState
 
   Widget _buildControls() {
     return Container(
-      padding:
-      const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
 
       decoration: BoxDecoration(
-        color:
-        const Color(0xFF10151D),
-
-        borderRadius:
-        BorderRadius.circular(14),
-
+        color: const Color(0xFF10151D),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-          const Color(0xFF26384A),
+          color: const Color(0xFF26384A),
         ),
       ),
 
@@ -1294,8 +1234,7 @@ class _GameScreenState
           ),
 
           Row(
-            mainAxisAlignment:
-            MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _movementButton(
                 Icons.keyboard_arrow_left,
@@ -1341,26 +1280,16 @@ class _GameScreenState
       child: ElevatedButton(
         onPressed: onPressed,
 
-        style:
-        ElevatedButton.styleFrom(
-          backgroundColor:
-          const Color(0xFF172638),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF172638),
+          foregroundColor: Colors.white,
+          padding: EdgeInsets.zero,
 
-          foregroundColor:
-          Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
 
-          padding:
-          EdgeInsets.zero,
-
-          shape:
-          RoundedRectangleBorder(
-            borderRadius:
-            BorderRadius.circular(10),
-
-            side:
-            const BorderSide(
-              color:
-              Color(0xFF59799D),
+            side: const BorderSide(
+              color: Color(0xFF59799D),
             ),
           ),
         ),
