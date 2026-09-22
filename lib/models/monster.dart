@@ -1,5 +1,3 @@
-// To store the monster data
-
 class Monster {
   final int row;
   final int column;
@@ -7,7 +5,9 @@ class Monster {
   final String name;
 
   int health;
+  final int maxHealth;
 
+  final int attackPower;
   final int experienceReward;
   final int coinReward;
 
@@ -18,8 +18,9 @@ class Monster {
     required this.column,
     required this.name,
     required this.health,
+    required this.attackPower,
     required this.experienceReward,
     required this.coinReward,
     this.isDefeated = false,
-  });
+  }) : maxHealth = health;
 }
