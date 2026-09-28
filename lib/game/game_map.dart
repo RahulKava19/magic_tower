@@ -19,6 +19,16 @@ class GameMap {
   static const int columns = 10;
 
   // ============================================================
+  // ACTIVE FLOOR
+  // ============================================================
+
+  static int activeFloor = 0;
+
+  static void setActiveFloor(int floor) {
+    activeFloor = floor;
+  }
+
+  // ============================================================
   // ENTRANCE MAP
   // ============================================================
 
@@ -273,6 +283,144 @@ class GameMap {
   ];
 
   // ============================================================
+  // FLOOR 2 - HARDER DUNGEON
+  // ============================================================
+
+  static const List<List<TileType>> floor2 = [
+    [
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.wall, TileType.floor, TileType.floor,
+      TileType.floor, TileType.floor, TileType.floor, TileType.gate, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.wall, TileType.floor, TileType.floor,
+      TileType.floor, TileType.floor, TileType.floor, TileType.floor, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+      TileType.wall, TileType.wall, TileType.floor, TileType.wall, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.floor, TileType.floor, TileType.floor,
+      TileType.floor, TileType.floor, TileType.floor, TileType.wall, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.floor, TileType.wall, TileType.wall,
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.floor, TileType.floor, TileType.floor,
+      TileType.floor, TileType.floor, TileType.floor, TileType.floor, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+      TileType.wall, TileType.wall, TileType.wall, TileType.floor, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.gate, TileType.floor, TileType.floor, TileType.floor,
+      TileType.floor, TileType.floor, TileType.floor, TileType.floor, TileType.wall,
+    ],
+    [
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+      TileType.wall, TileType.wall, TileType.wall, TileType.wall, TileType.wall,
+    ],
+  ];
+
+  // ============================================================
+  // FLOOR 2 KEYS
+  // ============================================================
+
+  static final List<KeyItem> floor2Keys = [
+    KeyItem(row: 8, column: 3, color: KeyColor.red),
+    KeyItem(row: 6, column: 3, color: KeyColor.blue),
+    KeyItem(row: 4, column: 4, color: KeyColor.yellow),
+    KeyItem(row: 2, column: 4, color: KeyColor.red),
+    KeyItem(row: 2, column: 5, color: KeyColor.blue),
+  ];
+
+  // ============================================================
+  // FLOOR 2 DOORS
+  // ============================================================
+
+  static final List<Door> floor2Doors = [
+    Door(row: 8, column: 5, color: KeyColor.red),
+    Door(row: 6, column: 6, color: KeyColor.blue),
+    Door(row: 4, column: 7, color: KeyColor.yellow),
+    Door(row: 2, column: 7, color: KeyColor.red),
+    Door(row: 1, column: 7, color: KeyColor.blue),
+  ];
+
+  // ============================================================
+  // FLOOR 2 MONSTERS
+  // ============================================================
+
+  static final List<Monster> floor2Monsters = [
+    Monster(
+      row: 8,
+      column: 4,
+      name: 'Green Slime',
+      health: 700,
+      attack: 150,
+      defence: 80,
+      experienceReward: 180,
+      coinReward: 35,
+    ),
+    Monster(
+      row: 7,
+      column: 8,
+      name: 'Red Slime',
+      health: 800,
+      attack: 200,
+      defence: 100,
+      experienceReward: 220,
+      coinReward: 45,
+    ),
+    Monster(
+      row: 6,
+      column: 5,
+      name: 'Skeleton',
+      health: 900,
+      attack: 220,
+      defence: 130,
+      experienceReward: 250,
+      coinReward: 50,
+    ),
+    Monster(
+      row: 4,
+      column: 6,
+      name: 'Orc',
+      health: 1200,
+      attack: 300,
+      defence: 180,
+      experienceReward: 350,
+      coinReward: 70,
+    ),
+    Monster(
+      row: 2,
+      column: 6,
+      name: 'Dark Orc',
+      health: 1500,
+      attack: 350,
+      defence: 220,
+      experienceReward: 500,
+      coinReward: 100,
+    ),
+    Monster(
+      row: 1,
+      column: 6,
+      name: 'Elite Skeleton',
+      health: 1100,
+      attack: 280,
+      defence: 170,
+      experienceReward: 400,
+      coinReward: 80,
+    ),
+  ];
+
+  // ============================================================
   // KEYS
   // ============================================================
 
@@ -435,6 +583,14 @@ class GameMap {
       return entranceMap[row][column];
     }
 
+    if (floor == 1) {
+      return floor1[row][column];
+    }
+
+    if (floor == 2) {
+      return floor2[row][column];
+    }
+
     return floor1[row][column];
   }
 
@@ -480,7 +636,10 @@ class GameMap {
       int row,
       int column,
       ) {
-    for (final key in floor1Keys) {
+    final List<KeyItem> keys =
+    activeFloor == 2 ? floor2Keys : floor1Keys;
+
+    for (final key in keys) {
       if (key.row == row &&
           key.column == column &&
           !key.isCollected) {
@@ -499,7 +658,10 @@ class GameMap {
       int row,
       int column,
       ) {
-    for (final door in floor1Doors) {
+    final List<Door> doors =
+    activeFloor == 2 ? floor2Doors : floor1Doors;
+
+    for (final door in doors) {
       if (door.row == row &&
           door.column == column) {
         return door;
@@ -517,7 +679,10 @@ class GameMap {
       int row,
       int column,
       ) {
-    for (final monster in floor1Monsters) {
+    final List<Monster> monsters =
+    activeFloor == 2 ? floor2Monsters : floor1Monsters;
+
+    for (final monster in monsters) {
       if (monster.row == row &&
           monster.column == column &&
           !monster.isDefeated) {

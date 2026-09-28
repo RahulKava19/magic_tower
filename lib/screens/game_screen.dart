@@ -55,6 +55,8 @@ class _GameScreenState extends State<GameScreen> {
       int rowChange,
       int columnChange,
       ) {
+    GameMap.setActiveFloor(currentFloor);
+
     final int newRow = player.row + rowChange;
     final int newColumn = player.column + columnChange;
 
@@ -108,7 +110,7 @@ class _GameScreenState extends State<GameScreen> {
     // DOOR
     // ==========================================================
 
-    final Door? door = currentFloor == 1
+    final Door? door = (currentFloor == 1 || currentFloor == 2)
         ? GameMap.getDoorAt(
       newRow,
       newColumn,
@@ -129,7 +131,7 @@ class _GameScreenState extends State<GameScreen> {
     // MONSTER
     // ==========================================================
 
-    final Monster? monster = currentFloor == 1
+    final Monster? monster = (currentFloor == 1 || currentFloor == 2)
         ? GameMap.getMonsterAt(
       newRow,
       newColumn,
@@ -150,7 +152,7 @@ class _GameScreenState extends State<GameScreen> {
     // KEY
     // ==========================================================
 
-    final KeyItem? key = currentFloor == 1
+    final KeyItem? key = (currentFloor == 1 || currentFloor == 2)
         ? GameMap.getKeyAt(
       newRow,
       newColumn,
@@ -217,7 +219,26 @@ class _GameScreenState extends State<GameScreen> {
     }
 
     if (currentFloor == 2) {
-      _goToPreviousFloor();
+      if (row == 8 && column == 1) {
+        _goToPreviousFloor();
+        return;
+      }
+
+      if (row == 1 && column == 8) {
+        _showObjectInfo(
+          'Floor 2 Complete',
+          'You reached the end of Floor 2.',
+          '🏆',
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              '🏆 Floor 2 completed!',
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -255,6 +276,10 @@ class _GameScreenState extends State<GameScreen> {
 
                   player.row = 8;
                   player.column = 2;
+
+                  GameMap.setActiveFloor(
+                    currentFloor,
+                  );
                 });
 
                 _showObjectInfo(
@@ -281,12 +306,16 @@ class _GameScreenState extends State<GameScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final bool fromFloorTwo = currentFloor == 2;
+
         return AlertDialog(
           title: const Text(
             '⬇️ Previous Floor',
           ),
-          content: const Text(
-            'Return to the entrance floor?',
+          content: Text(
+            fromFloorTwo
+                ? 'Return to Floor 1?'
+                : 'Return to the entrance floor?',
           ),
           actions: [
             TextButton(
@@ -302,15 +331,28 @@ class _GameScreenState extends State<GameScreen> {
                 Navigator.of(context).pop();
 
                 setState(() {
-                  currentFloor = 0;
+                  if (fromFloorTwo) {
+                    currentFloor = 1;
+                    player.row = 8;
+                    player.column = 2;
+                  } else {
+                    currentFloor = 0;
+                    player.row = 1;
+                    player.column = 4;
+                  }
 
-                  player.row = 1;
-                  player.column = 4;
+                  GameMap.setActiveFloor(
+                    currentFloor,
+                  );
                 });
 
                 _showObjectInfo(
-                  'Entrance Floor',
-                  'You returned to the entrance of the tower.',
+                  fromFloorTwo
+                      ? 'Floor 1'
+                      : 'Entrance Floor',
+                  fromFloorTwo
+                      ? 'You returned to Floor 1.'
+                      : 'You returned to the entrance of the tower.',
                   '⬇️',
                 );
               },
@@ -337,22 +379,40 @@ class _GameScreenState extends State<GameScreen> {
             '⬆️ Next Floor',
           ),
           content: const Text(
-            'You found the staircase to the next floor.\n\n'
-                'Floor 2 will be connected here.',
+            'You found the staircase to Floor 2.\n\n'
+                'The monsters are stronger and the dungeon is more difficult.',
           ),
           actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Stay',
+              ),
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
 
+                setState(() {
+                  currentFloor = 2;
+                  player.row = 8;
+                  player.column = 2;
+
+                  GameMap.setActiveFloor(
+                    currentFloor,
+                  );
+                });
+
                 _showObjectInfo(
                   'Floor 2',
-                  'The second floor is ready to be connected.',
-                  '⬆️',
+                  'A harder dungeon floor. Find keys, open doors and defeat stronger monsters.',
+                  '⚔️',
                 );
               },
               child: const Text(
-                'Continue',
+                'Enter Floor 2',
               ),
             ),
           ],
@@ -880,9 +940,17 @@ class _GameScreenState extends State<GameScreen> {
         key.isCollected = false;
       }
 
+      for (final key in GameMap.floor2Keys) {
+        key.isCollected = false;
+      }
+
       // RESET DOORS
 
       for (final door in GameMap.floor1Doors) {
+        door.isOpen = false;
+      }
+
+      for (final door in GameMap.floor2Doors) {
         door.isOpen = false;
       }
 
@@ -895,10 +963,41 @@ class _GameScreenState extends State<GameScreen> {
             .toLowerCase()
             .contains('skeleton')) {
           monster.health = 700;
+        } else if (monster.name
+            .toLowerCase()
+            .contains('red slime')) {
+          monster.health = 500;
         } else {
           monster.health = 500;
         }
       }
+
+      for (final monster in GameMap.floor2Monsters) {
+        monster.isDefeated = false;
+
+        switch (monster.name) {
+          case 'Green Slime':
+            monster.health = 700;
+            break;
+          case 'Red Slime':
+            monster.health = 800;
+            break;
+          case 'Skeleton':
+            monster.health = 900;
+            break;
+          case 'Orc':
+            monster.health = 1200;
+            break;
+          case 'Dark Orc':
+            monster.health = 1500;
+            break;
+          case 'Elite Skeleton':
+            monster.health = 1100;
+            break;
+        }
+      }
+
+      GameMap.setActiveFloor(0);
     });
 
     _showObjectInfo(
