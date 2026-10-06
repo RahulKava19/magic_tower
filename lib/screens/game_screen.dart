@@ -108,12 +108,11 @@ class _GameScreenState extends State<GameScreen> {
     // DOOR
     // ==========================================================
 
-    final Door? door = currentFloor == 1
-        ? GameMap.getDoorAt(
+    final Door? door = GameMap.getDoorAt(
+      currentFloor,
       newRow,
       newColumn,
-    )
-        : null;
+    );
 
     if (door != null && !door.isOpen) {
       _tryOpenDoor(
@@ -129,12 +128,11 @@ class _GameScreenState extends State<GameScreen> {
     // MONSTER
     // ==========================================================
 
-    final Monster? monster = currentFloor == 1
-        ? GameMap.getMonsterAt(
+    final Monster? monster = GameMap.getMonsterAt(
+      currentFloor,
       newRow,
       newColumn,
-    )
-        : null;
+    );
 
     if (monster != null && !monster.isDefeated) {
       _showMonsterDialog(
@@ -150,12 +148,11 @@ class _GameScreenState extends State<GameScreen> {
     // KEY
     // ==========================================================
 
-    final KeyItem? key = currentFloor == 1
-        ? GameMap.getKeyAt(
+    final KeyItem? key = GameMap.getKeyAt(
+      currentFloor,
       newRow,
       newColumn,
-    )
-        : null;
+    );
 
     if (key != null && !key.isCollected) {
       _collectKey(
@@ -182,11 +179,17 @@ class _GameScreenState extends State<GameScreen> {
         'Follow the vertical path towards the tower entrance.',
         '⬆️',
       );
+    } else if (currentFloor == 1) {
+      _showObjectInfo(
+        'Floor 1',
+        'Explore the dungeon. Find keys, open doors and defeat monsters.',
+        '🏰',
+      );
     } else {
       _showObjectInfo(
-        'Dungeon Floor',
-        'You can move through this area.',
-        '⬜',
+        'Floor 2',
+        'Dungeon Floor 2. Conquer the monsters and reach the summit gate.',
+        '🏰',
       );
     }
   }
@@ -211,13 +214,21 @@ class _GameScreenState extends State<GameScreen> {
       }
 
       if (row == 1 && column == 8) {
-        _goToNextFloor();
+        _goToFloorTwo();
         return;
       }
     }
 
     if (currentFloor == 2) {
-      _goToPreviousFloor();
+      if (row == 8 && column == 1) {
+        _goToFloorOneFromFloorTwo();
+        return;
+      }
+
+      if (row == 1 && column == 8) {
+        _showFloorTwoCompletion();
+        return;
+      }
     }
   }
 
@@ -328,17 +339,120 @@ class _GameScreenState extends State<GameScreen> {
   // FLOOR 1 -> FLOOR 2
   // ============================================================
 
-  void _goToNextFloor() {
+  void _goToFloorTwo() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text(
-            '⬆️ Next Floor',
+            '⬆️ Ascend to Floor 2',
           ),
           content: const Text(
             'You found the staircase to the next floor.\n\n'
-                'Floor 2 will be connected here.',
+                'Stronger monsters and deeper dangers await on Floor 2!',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Stay',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                setState(() {
+                  currentFloor = 2;
+
+                  player.row = 8;
+                  player.column = 2;
+                });
+
+                _showObjectInfo(
+                  'Floor 2',
+                  'Defeat the Armored Skeleton, Orc Warrior, and Dark Knight!',
+                  '🏰',
+                );
+              },
+              child: const Text(
+                'Enter Floor 2',
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  // FLOOR 2 -> FLOOR 1
+  // ============================================================
+
+  void _goToFloorOneFromFloorTwo() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            '⬇️ Descend to Floor 1',
+          ),
+          content: const Text(
+            'Return down the staircase to Floor 1?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Cancel',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                setState(() {
+                  currentFloor = 1;
+
+                  player.row = 1;
+                  player.column = 7;
+                });
+
+                _showObjectInfo(
+                  'Floor 1',
+                  'You returned to Floor 1.',
+                  '⬇️',
+                );
+              },
+              child: const Text(
+                'Go Down',
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  // FLOOR 2 COMPLETION / SUMMIT GATE
+  // ============================================================
+
+  void _showFloorTwoCompletion() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            '🏆 Floor 2 Cleared!',
+          ),
+          content: const Text(
+            'Congratulations! You reached the summit staircase.\n\n'
+                'Floor 3 and higher levels of the Magic Tower will be connected here.',
           ),
           actions: [
             ElevatedButton(
@@ -346,9 +460,9 @@ class _GameScreenState extends State<GameScreen> {
                 Navigator.of(context).pop();
 
                 _showObjectInfo(
-                  'Floor 2',
-                  'The second floor is ready to be connected.',
-                  '⬆️',
+                  'Tower Summit Gate',
+                  'You conquered Floor 2! The path to higher floors awaits.',
+                  '⭐',
                 );
               },
               child: const Text(
@@ -500,6 +614,24 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // ============================================================
+  // MONSTER ICON
+  // ============================================================
+
+  String _monsterIcon(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('knight')) {
+      return '🤺';
+    }
+    if (lower.contains('orc')) {
+      return '👹';
+    }
+    if (lower.contains('skeleton')) {
+      return '💀';
+    }
+    return '👾';
+  }
+
+  // ============================================================
   // MONSTER DIALOG
   // ============================================================
 
@@ -510,6 +642,8 @@ class _GameScreenState extends State<GameScreen> {
       ) {
     currentMonster = monster;
 
+    final String icon = _monsterIcon(monster.name);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -518,11 +652,7 @@ class _GameScreenState extends State<GameScreen> {
           title: Row(
             children: [
               Text(
-                monster.name.toLowerCase().contains(
-                  'skeleton',
-                )
-                    ? '💀'
-                    : '👾',
+                icon,
                 style: const TextStyle(
                   fontSize: 28,
                 ),
@@ -550,11 +680,7 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               Center(
                 child: Text(
-                  monster.name.toLowerCase().contains(
-                    'skeleton',
-                  )
-                      ? '💀'
-                      : '👾',
+                  icon,
                   style: const TextStyle(
                     fontSize: 55,
                   ),
@@ -876,28 +1002,30 @@ class _GameScreenState extends State<GameScreen> {
 
       // RESET KEYS
 
-      for (final key in GameMap.floor1Keys) {
+      for (final key in [
+        ...GameMap.floor1Keys,
+        ...GameMap.floor2Keys,
+      ]) {
         key.isCollected = false;
       }
 
       // RESET DOORS
 
-      for (final door in GameMap.floor1Doors) {
+      for (final door in [
+        ...GameMap.floor1Doors,
+        ...GameMap.floor2Doors,
+      ]) {
         door.isOpen = false;
       }
 
       // RESET MONSTERS
 
-      for (final monster in GameMap.floor1Monsters) {
+      for (final monster in [
+        ...GameMap.floor1Monsters,
+        ...GameMap.floor2Monsters,
+      ]) {
         monster.isDefeated = false;
-
-        if (monster.name
-            .toLowerCase()
-            .contains('skeleton')) {
-          monster.health = 700;
-        } else {
-          monster.health = 500;
-        }
+        monster.health = monster.maxHealth;
       }
     });
 
