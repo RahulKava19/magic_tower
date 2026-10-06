@@ -19,6 +19,8 @@ class Monster {
 
   int health;
 
+  final int maxHealth;
+
   int attack;
 
   int defence;
@@ -46,10 +48,11 @@ class Monster {
     required this.column,
     required this.name,
     required this.health,
+    int? maxHealth,
     required this.attack,
     required this.defence,
     required this.experienceReward,
     required this.coinReward,
     this.isDefeated = false,
-  });
+  }) : maxHealth = maxHealth ?? health;
 }

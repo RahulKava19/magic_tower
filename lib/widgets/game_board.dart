@@ -74,17 +74,17 @@ class GameBoard extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   gridDelegate:
                   const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 10,
+                    crossAxisCount: columns,
                     childAspectRatio: 1,
                   ),
-                  itemCount: 100,
+                  itemCount: rows * columns,
                   itemBuilder:
                       (context, index) {
                     final int row =
-                        index ~/ 10;
+                        index ~/ columns;
 
                     final int column =
-                        index % 10;
+                        index % columns;
 
                     return _buildTile(
                       row,
@@ -119,29 +119,23 @@ class GameBoard extends StatelessWidget {
         player.row == row &&
             player.column == column;
 
-    final KeyItem? key =
-    currentFloor == 1
-        ? GameMap.getKeyAt(
+    final KeyItem? key = GameMap.getKeyAt(
+      currentFloor,
       row,
       column,
-    )
-        : null;
+    );
 
-    final Door? door =
-    currentFloor == 1
-        ? GameMap.getDoorAt(
+    final Door? door = GameMap.getDoorAt(
+      currentFloor,
       row,
       column,
-    )
-        : null;
+    );
 
-    final Monster? monster =
-    currentFloor == 1
-        ? GameMap.getMonsterAt(
+    final Monster? monster = GameMap.getMonsterAt(
+      currentFloor,
       row,
       column,
-    )
-        : null;
+    );
 
     return Container(
       decoration: BoxDecoration(
@@ -240,9 +234,12 @@ class GameBoard extends StatelessWidget {
       ) {
     String icon = '👾';
 
-    if (monster.name
-        .toLowerCase()
-        .contains('skeleton')) {
+    final String name = monster.name.toLowerCase();
+    if (name.contains('knight')) {
+      icon = '🤺';
+    } else if (name.contains('orc')) {
+      icon = '👹';
+    } else if (name.contains('skeleton')) {
       icon = '💀';
     }
 
